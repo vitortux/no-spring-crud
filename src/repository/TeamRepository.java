@@ -44,6 +44,10 @@ public class TeamRepository {
         return teams;
     }
 
+    public int getNewId() {
+        return teams.size() + 1;
+    }
+
     public void saveData() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Map.Entry<Integer, Team> entry : teams.entrySet()) {
@@ -81,9 +85,5 @@ public class TeamRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public int getNewId() {
-        return teams.size() + 1;
     }
 }
