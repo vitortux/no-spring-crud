@@ -35,7 +35,7 @@ public class TeamRepository {
                     logger.info("Tabela criada em: " + FILE_PATH);
                 }
             } catch (IOException e) {
-                logger.severe("Erro ao criar o arquivo: " + e.getMessage());
+                logger.severe("Erro ao criar o arquivo \"" + FILE_PATH + "\" " + e.getMessage());
             }
         }
     }
@@ -56,7 +56,7 @@ public class TeamRepository {
                 writer.newLine();
             }
         } catch (IOException e) {
-            logger.severe("Erro ao salvar os times no arquivo: " + FILE_PATH + ". Detalhes do erro: " + e.getMessage());
+            logger.severe("Erro ao salvar os times no arquivo \"" + FILE_PATH + "\" " + e.getMessage());
         }
     }
 
@@ -81,9 +81,9 @@ public class TeamRepository {
                 }
             }
 
-            logger.info("Times carregados com sucesso!");
+            logger.info("Dados da tabela \"" + FILE_PATH + "\" recuperados com sucesso!");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Erro ao carregar dados do arquivo: " + FILE_PATH + ". Detalhes do erro: " + e.getMessage());
         }
     }
 }

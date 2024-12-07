@@ -18,7 +18,7 @@ public class TeamController {
             logger.severe("Erro: o time \"" + team.getName() + "\" já foi cadastrado.");
         } else {
             teamService.addTeam(team);
-            logger.info("Time \"" + team.getName() + "\" adicionado ao repositório.");
+            logger.info("Time \"" + team.getName() + "\" cadastrado com sucesso.");
         }
     }
 }
