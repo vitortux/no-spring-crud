@@ -24,7 +24,46 @@ public class TeamRepository {
         loadData();
     }
 
-    public void createTable() {
+    public void addTeam(Team team) {
+        if (!teams.containsValue(team)) {
+            int newId = getNewId();
+            teams.put(newId, team);
+            saveData();
+            logger.info("Time \"" + team.getName() + "\" cadastrado com sucesso.");
+        } else {
+            logger.severe("Time: \"" + team.getName() + "\" já está cadastrado.");
+        }
+    }
+
+    public Map<Integer, Team> getAllTeams() {
+        return teams;
+    }
+
+    public void updateTeam(int id, Team updatedTeam) {
+        if (teams.containsKey(id)) {
+            teams.put(id, updatedTeam);
+            saveData();
+            logger.info("Time \"" + updatedTeam.getName() + "\" alterado com sucesso.");
+        } else {
+            logger.severe("Não foi possível encontrar o time: \"" + updatedTeam.getName() + "\"");
+        }
+    }
+
+    public void deleteTeam(int id) {
+        if (teams.containsKey(id)) {
+            teams.remove(id);
+            saveData();
+            logger.info("Time removido com sucesso.");
+        } else {
+            logger.severe("Não foi possível encontrar o time na tabela.");
+        }
+    }
+
+    private int getNewId() {
+        return teams.size() + 1;
+    }
+
+    private void createTable() {
         File file = new File(FILE_PATH);
 
         if (!file.exists()) {
@@ -40,15 +79,7 @@ public class TeamRepository {
         }
     }
 
-    public Map<Integer, Team> getTeams() {
-        return teams;
-    }
-
-    public int getNewId() {
-        return teams.size() + 1;
-    }
-
-    public void saveData() {
+    private void saveData() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Map.Entry<Integer, Team> entry : teams.entrySet()) {
                 Team team = entry.getValue();
@@ -60,7 +91,7 @@ public class TeamRepository {
         }
     }
 
-    public void loadData() {
+    private void loadData() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
 
