@@ -121,4 +121,9 @@ public class Team {
     public String toString() {
         return name + "," + city + "," + coach + "," + arena + "," + owner + "," + championships;
     }
+
+    public static Team fromCsv(String csv) {
+        String[] data = csv.split(",");
+        return new Team(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]));
+    }
 }
