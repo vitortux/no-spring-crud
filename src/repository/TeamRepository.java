@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import model.Team;
@@ -60,12 +62,11 @@ public class TeamRepository {
     }
 
     private int getNewId() {
-        return teams.size() + 1;
+        return teams.isEmpty() ? 0 : Collections.max(teams.keySet()) + 1;
     }
 
     private void createTable() {
         File file = new File(FILE_PATH);
-
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
@@ -92,29 +93,37 @@ public class TeamRepository {
     }
 
     private void loadData() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            logger.warning("Arquivo não encontrado: " + FILE_PATH);
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-
-                if (data.length == 7) {
-                    int id = Integer.parseInt(data[0]);
-                    String name = data[1];
-                    String city = data[2];
-                    String coach = data[3];
-                    String arena = data[4];
-                    String owner = data[5];
-                    int championships = Integer.parseInt(data[6]);
-
-                    Team team = new Team(name, city, coach, arena, owner, championships);
-                    teams.put(id, team);
-                }
+                parseTeam(line);
             }
-
             logger.info("Dados da tabela \"" + FILE_PATH + "\" recuperados com sucesso!");
         } catch (IOException e) {
             logger.severe("Erro ao carregar dados do arquivo: " + FILE_PATH + ". Detalhes do erro: " + e.getMessage());
+        }
+    }
+
+    private void parseTeam(String line) {
+        String[] entry = line.split(",", 2);
+
+        if (entry.length < 2) {
+            logger.log(Level.WARNING, () -> "Linha malformada (faltando dados): " + line);
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(entry[0]);
+            Team team = Team.fromCsv(entry[1]);
+            teams.put(id, team);
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING, () -> "Erro ao processar linha (ID inválido): " + line);
         }
     }
 }
