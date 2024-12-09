@@ -2,10 +2,11 @@ import java.util.Map;
 
 import model.Team;
 import repository.TeamRepository;
+import service.TeamService;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        TeamRepository repository = new TeamRepository();
+        TeamService service = new TeamService(new TeamRepository());
 
         Team lakers = new Team("Los Angeles Lakers", "Los Angeles", "Darvin Ham", "Crypto.com Arena", "Jeanie Buss",
                 17);
@@ -15,14 +16,14 @@ public class App {
         Team celtics = new Team("Boston Celtics", "Boston", "Joe Mazzulla", "TD Garden", "Wyc Grousbeck", 17);
         Team nets = new Team("Brooklyn Nets", "Brooklyn", "Jacque Vaughn", "Barclays Center", "Joe Tsai", 2);
 
-        repository.addTeam(lakers);
-        repository.addTeam(bulls);
-        repository.addTeam(warriors);
-        repository.addTeam(celtics);
-        repository.deleteTeam(3);
-        repository.addTeam(nets);
+        service.addTeam(lakers);
+        service.addTeam(bulls);
+        service.addTeam(warriors);
+        service.addTeam(celtics);
+        service.deleteTeam(3);
+        service.addTeam(nets);
 
-        Map<Integer, Team> teams = repository.getAllTeams();
+        Map<Integer, Team> teams = service.getAllTeams();
         for (Map.Entry<Integer, Team> entry : teams.entrySet()) {
             System.out.println(entry.getKey() + "," + entry.getValue().toString());
         }
