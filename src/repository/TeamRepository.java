@@ -93,13 +93,7 @@ public class TeamRepository {
     }
 
     private void loadData() {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            logger.warning("Arquivo não encontrado: " + FILE_PATH);
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 parseTeam(line);
