@@ -17,7 +17,6 @@ import model.Team;
 public class TeamRepository {
     private static final Logger logger = Logger.getLogger(TeamRepository.class.getName());
     private static final String FILE_PATH = "./src/db/team.txt";
-
     private Map<Integer, Team> teams;
 
     public TeamRepository() {
@@ -27,38 +26,27 @@ public class TeamRepository {
     }
 
     public void addTeam(Team team) {
-        if (!teams.containsValue(team)) {
-            int newId = getNewId();
-            teams.put(newId, team);
-            saveData();
-            logger.info("Time \"" + team.getName() + "\" cadastrado com sucesso.");
-        } else {
-            logger.severe("Time: \"" + team.getName() + "\" já está cadastrado.");
-        }
+        int newId = getNewId();
+        teams.put(newId, team);
+        saveData();
     }
 
     public Map<Integer, Team> getAllTeams() {
-        return teams;
+        return new HashMap<>(teams);
+    }
+
+    public Team getTeamFromId(int id) {
+        return teams.get(id);
     }
 
     public void updateTeam(int id, Team updatedTeam) {
-        if (teams.containsKey(id)) {
-            teams.put(id, updatedTeam);
-            saveData();
-            logger.info("Time \"" + updatedTeam.getName() + "\" alterado com sucesso.");
-        } else {
-            logger.severe("Não foi possível encontrar o time: \"" + updatedTeam.getName() + "\"");
-        }
+        teams.put(id, updatedTeam);
+        saveData();
     }
 
     public void deleteTeam(int id) {
-        if (teams.containsKey(id)) {
-            teams.remove(id);
-            saveData();
-            logger.info("Time removido com sucesso.");
-        } else {
-            logger.severe("Não foi possível encontrar o time na tabela.");
-        }
+        teams.remove(id);
+        saveData();
     }
 
     private int getNewId() {
