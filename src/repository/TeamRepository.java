@@ -18,6 +18,7 @@ public class TeamRepository {
     private static final Logger logger = Logger.getLogger(TeamRepository.class.getName());
     private static final String FILE_PATH = "./src/db/team.txt";
     private Map<Integer, Team> teams;
+    private int lastUsedId = 0;
 
     public TeamRepository() {
         this.teams = new HashMap<>();
@@ -50,7 +51,7 @@ public class TeamRepository {
     }
 
     private int getNewId() {
-        return teams.isEmpty() ? 0 : Collections.max(teams.keySet()) + 1;
+        return lastUsedId++;
     }
 
     private void createTable() {
@@ -104,6 +105,10 @@ public class TeamRepository {
             int id = Integer.parseInt(entry[0]);
             Team team = Team.fromCsv(entry[1]);
             teams.put(id, team);
+
+            if (id > lastUsedId) {
+                lastUsedId = id;
+            }
         } catch (NumberFormatException e) {
             logger.log(Level.WARNING, () -> "Erro ao processar linha (ID inválido): " + line);
         }
