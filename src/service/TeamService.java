@@ -3,10 +3,12 @@ package service;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import exception.DuplicateTeamException;
 import mapper.TeamMapper;
 import model.dto.TeamDTO;
 import model.entity.Team;
 import repository.TeamRepository;
+import validation.TeamFormatValidation;
 
 public class TeamService {
     private TeamRepository repository;
@@ -15,18 +17,24 @@ public class TeamService {
         this.repository = repository;
     }
 
-    public boolean addTeam(TeamDTO dto) {
+    public void addTeam(TeamDTO dto) {
         Team team = TeamMapper.toEntity(dto);
 
-        if (!repository.getAllTeams().containsValue(team)) {
-            repository.addTeam(team);
-            return true;
+        new TeamFormatValidation().validate(team);
+
+        if (repository.getAllTeams().containsValue(team)) {
+            throw new DuplicateTeamException("O time " + team.getName() + " já foi cadastrado.");
         }
-        return false;
+
+        repository.addTeam(team);
     }
 
     public Map<Integer, TeamDTO> getAllTeams() {
-        return repository.getAllTeams().entrySet().stream()
+        Map<Integer, Team> allTeams = repository.getAllTeams();
+
+        // TODO: validação + exception para o EmptyMap().
+
+        return allTeams.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> TeamMapper.toDto(entry.getValue())));
     }
 
