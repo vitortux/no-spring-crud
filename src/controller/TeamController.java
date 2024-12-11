@@ -6,7 +6,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import exception.DuplicateTeamException;
 import exception.NoTeamsException;
+import exception.TeamNotFoundException;
 import model.dto.TeamDTO;
 import service.TeamService;
 
@@ -17,6 +19,37 @@ public class TeamController {
 
     public TeamController(TeamService service) {
         this.service = service;
+    }
+
+    public void addTeam() {
+        try {
+            String name = JOptionPane.showInputDialog(null, "Nome do time:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            String city = JOptionPane.showInputDialog(null, "Cidade do time:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            String coach = JOptionPane.showInputDialog(null, "Treinador do time:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            String arena = JOptionPane.showInputDialog(null, "Arena do time:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            String owner = JOptionPane.showInputDialog(null, "Dono do time:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            String championshipsInput = JOptionPane.showInputDialog(null, "Número de campeonatos:", "Adicionar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            int championships = Integer.parseInt(championshipsInput);
+
+            TeamDTO newTeam = new TeamDTO(name, city, coach, arena, owner, championships);
+            service.addTeam(newTeam);
+
+            JOptionPane.showMessageDialog(null, "Time adicionado com sucesso!", "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (DuplicateTeamException e) {
+            logger.log(Level.SEVERE, () -> "Erro ao adicionar time: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Erro ao adicionar o time:\n" + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     public void getAllTeams() {
@@ -34,7 +67,25 @@ public class TeamController {
         } catch (NoTeamsException e) {
             logger.log(Level.WARNING, () -> "Erro ao retornar times: " + e.getMessage());
             JOptionPane.showMessageDialog(null,
-                    "Erro ao tentar recuperar os times:\n" + e.getMessage(),
+                    "Erro ao recuperar os times:\n" + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void getTeamById() {
+        try {
+            String idInput = JOptionPane.showInputDialog(null, "Número de campeonatos:", "Buscar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            int id = Integer.parseInt(idInput);
+
+            TeamDTO team = service.getTeamById(id);
+            JOptionPane.showMessageDialog(null, team.toString(), "Informações do Time",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (TeamNotFoundException e) {
+            logger.log(Level.WARNING, () -> "Erro ao retornar time: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Erro ao recuperar o time:\n" + e.getMessage(),
                     "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }
