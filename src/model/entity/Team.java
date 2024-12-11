@@ -1,7 +1,5 @@
 package model.entity;
 
-import model.dto.TeamDTO;
-
 public class Team {
     private String name;
     private String city;
@@ -17,15 +15,6 @@ public class Team {
         this.arena = arena;
         this.owner = owner;
         this.championships = championships;
-    }
-
-    public Team(TeamDTO dto) {
-        this.name = dto.name();
-        this.city = dto.city();
-        this.coach = dto.coach();
-        this.arena = dto.arena();
-        this.owner = dto.owner();
-        this.championships = dto.championships();
     }
 
     public String getName() {

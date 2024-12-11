@@ -1,5 +1,11 @@
 package controller;
 
-public class TeamController {
+import service.TeamService;
 
+public class TeamController {
+    private TeamService service;
+
+    public TeamController(TeamService service) {
+        this.service = service;
+    }
 }
