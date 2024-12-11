@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mapper.TeamMapper;
 import model.entity.Team;
 
 public class TeamRepository {
@@ -72,7 +73,7 @@ public class TeamRepository {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Map.Entry<Integer, Team> entry : teams.entrySet()) {
                 Team team = entry.getValue();
-                writer.write(entry.getKey() + "," + team.toString());
+                writer.write(entry.getKey() + "," + TeamMapper.toCsv(team));
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -102,7 +103,7 @@ public class TeamRepository {
 
         try {
             int id = Integer.parseInt(entry[0]);
-            Team team = Team.fromCsv(entry[1]);
+            Team team = TeamMapper.fromCsv(entry[1]);
             teams.put(id, team);
 
             if (id > lastUsedId) {
