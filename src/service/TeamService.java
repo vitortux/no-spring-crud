@@ -36,12 +36,13 @@ public class TeamService {
 
     public boolean updateTeam(int id, TeamDTO dto) {
         Team updatedTeam = TeamMapper.toEntity(dto);
+        Map<Integer, Team> allTeams = repository.getAllTeams();
 
-        if (repository.getAllTeams().containsValue(updatedTeam)) {
+        if (allTeams.containsValue(updatedTeam)) {
             return false;
         }
 
-        if (!repository.getAllTeams().containsKey(id)) {
+        if (!allTeams.containsKey(id)) {
             return false;
         }
 
