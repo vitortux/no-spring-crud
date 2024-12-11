@@ -1,5 +1,7 @@
 package model.entity;
 
+import model.dto.TeamDTO;
+
 public class Team {
     private String name;
     private String city;
@@ -17,57 +19,37 @@ public class Team {
         this.championships = championships;
     }
 
-    public String getName() {
-        return name;
+    public Team(TeamDTO dto) {
+        this.name = dto.name();
+        this.city = dto.city();
+        this.coach = dto.coach();
+        this.arena = dto.arena();
+        this.owner = dto.owner();
+        this.championships = dto.championships();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public String getCoach() {
         return coach;
-    }
-
-    public void setCoach(String coach) {
-        this.coach = coach;
     }
 
     public String getArena() {
         return arena;
     }
 
-    public void setArena(String arena) {
-        this.arena = arena;
-    }
-
     public String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public int getChampionships() {
         return championships;
-    }
-
-    public void setChampionships(int championships) {
-        this.championships = championships;
-    }
-
-    public static Team fromCsv(String csv) {
-        String[] data = csv.split(",");
-        return new Team(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]));
     }
 
     @Override
@@ -124,6 +106,7 @@ public class Team {
 
     @Override
     public String toString() {
-        return name + "," + city + "," + coach + "," + arena + "," + owner + "," + championships;
+        return "Team [name=" + name + ", city=" + city + ", coach=" + coach + ", arena=" + arena + ", owner=" + owner
+                + ", championships=" + championships + "]";
     }
 }
