@@ -11,6 +11,7 @@ import exception.NoTeamsException;
 import exception.TeamNotFoundException;
 import model.dto.TeamDTO;
 import service.TeamService;
+import validation.InputValidator;
 
 public class TeamController {
     private static final Logger logger = Logger.getLogger(TeamController.class.getName());
@@ -23,33 +24,24 @@ public class TeamController {
 
     public void addTeam() {
         try {
-            String name = JOptionPane.showInputDialog(null, "Nome do time:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            String city = JOptionPane.showInputDialog(null, "Cidade do time:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            String coach = JOptionPane.showInputDialog(null, "Treinador do time:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            String arena = JOptionPane.showInputDialog(null, "Arena do time:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            String owner = JOptionPane.showInputDialog(null, "Dono do time:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            String championshipsInput = JOptionPane.showInputDialog(null, "Número de campeonatos:", "Adicionar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            int championships = Integer.parseInt(championshipsInput);
+            String name = InputValidator.getValidInput("Nome do time:");
+            String city = InputValidator.getValidInput("Cidade do time:");
+            String coach = InputValidator.getValidInput("Treinador do time:");
+            String arena = InputValidator.getValidInput("Arena do time:");
+            String owner = InputValidator.getValidInput("Dono do time:");
+            int championships = InputValidator.getValidIntegerInput("Número de campeonatos:");
 
             TeamDTO newTeam = new TeamDTO(name, city, coach, arena, owner, championships);
             service.addTeam(newTeam);
 
+            logger.log(Level.INFO, () -> "Time \"" + newTeam.name() + "\" adicionado com sucesso.");
             JOptionPane.showMessageDialog(null, "Time adicionado com sucesso!", "Sucesso",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (DuplicateTeamException e) {
             logger.log(Level.SEVERE, () -> "Erro ao adicionar time: " + e.getMessage());
-            JOptionPane.showMessageDialog(null,
-                    "Erro ao adicionar o time:\n" + e.getMessage(),
-                    "Erro",
+            JOptionPane.showMessageDialog(null, "Erro ao adicionar o time:\n" + e.getMessage(), "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     public void getAllTeams() {
@@ -63,29 +55,77 @@ public class TeamController {
                 message.append("id=").append(id).append(" ").append(team.toString()).append("\n");
             }
 
+            logger.log(Level.INFO, () -> "Times recuperados do banco com sucesso.");
             JOptionPane.showMessageDialog(null, message.toString(), "Times", JOptionPane.INFORMATION_MESSAGE);
         } catch (NoTeamsException e) {
-            logger.log(Level.WARNING, () -> "Erro ao retornar times: " + e.getMessage());
+            logger.log(Level.INFO, () -> "Não foi possível retornar a lista de times: " + e.getMessage());
             JOptionPane.showMessageDialog(null,
-                    "Erro ao recuperar os times:\n" + e.getMessage(),
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
+                    "Não há times cadastrados no momento.",
+                    "Listar TImes",
+                    JOptionPane.INFORMATION_MESSAGE);
+
         }
     }
 
     public void getTeamById() {
         try {
-            String idInput = JOptionPane.showInputDialog(null, "Número de campeonatos:", "Buscar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            int id = Integer.parseInt(idInput);
+            int id = InputValidator.getValidIntegerInput("Digite o ID:");
 
             TeamDTO team = service.getTeamById(id);
+
+            logger.log(Level.INFO, () -> "Time \"" + team.name() + "\" recuperado com sucesso.");
             JOptionPane.showMessageDialog(null, team.toString(), "Informações do Time",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (TeamNotFoundException e) {
             logger.log(Level.WARNING, () -> "Erro ao retornar time: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao recuperar o time:\n" + e.getMessage(), "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void updateTeam() {
+        try {
+            int id = InputValidator.getValidIntegerInput("Digite o ID:");
+            TeamDTO team = service.getTeamById(id);
+
+            String name = InputValidator.getValidInput("Nome do time:", team.name());
+            String city = InputValidator.getValidInput("Cidade do time:", team.city());
+            String coach = InputValidator.getValidInput("Treinador do time:", team.coach());
+            String arena = InputValidator.getValidInput("Arena do time:", team.arena());
+            String owner = InputValidator.getValidInput("Dono do time:", team.owner());
+            int championships = InputValidator.getValidIntegerInput("Número de campeonatos:", team.championships());
+
+            TeamDTO updatedTeam = new TeamDTO(name, city, coach, arena, owner, championships);
+
+            service.updateTeam(id, updatedTeam);
+
+            logger.log(Level.INFO, () -> "Time com ID " + id + " foi atualizado com sucesso.");
+            JOptionPane.showMessageDialog(null, "Time atualizado com sucesso!", "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (TeamNotFoundException | DuplicateTeamException e) {
+            logger.log(Level.WARNING, () -> "Erro ao retornar time: " + e.getMessage());
             JOptionPane.showMessageDialog(null,
                     "Erro ao recuperar o time:\n" + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void deleteTeam() {
+        try {
+            String idInput = JOptionPane.showInputDialog(null, "Digite o ID:", "Deletar Time",
+                    JOptionPane.PLAIN_MESSAGE);
+            int id = Integer.parseInt(idInput);
+
+            service.deleteTeam(id);
+
+            logger.log(Level.INFO, () -> "Time deletado (ID: " + id + ") com sucesso.");
+            JOptionPane.showMessageDialog(null, "Time deletado com sucesso!", "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (TeamNotFoundException e) {
+            logger.log(Level.WARNING, () -> "Erro ao deletar time: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Erro ao deletar o time:\n" + e.getMessage(),
                     "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }

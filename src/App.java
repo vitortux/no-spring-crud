@@ -53,19 +53,19 @@ public class App {
 
             switch (option) {
                 case 0:
-                    // controller.addTeam();
+                    controller.addTeam();
                     break;
                 case 1:
                     controller.getAllTeams();
                     break;
                 case 2:
-                    // controller.getTeamById();
+                    controller.getTeamById();
                     break;
                 case 3:
-                    // controller.updateTeam();
+                    controller.updateTeam();
                     break;
                 case 4:
-                    // controller.deleteTeam();
+                    controller.deleteTeam();
                     break;
                 default:
                     break;
