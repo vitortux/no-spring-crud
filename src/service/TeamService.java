@@ -42,8 +42,8 @@ public class TeamService {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> TeamMapper.toDto(entry.getValue())));
     }
 
-    public TeamDTO getTeamFromId(int id) {
-        Team team = repository.getTeamFromId(id);
+    public TeamDTO getTeamById(int id) {
+        Team team = repository.getTeamById(id);
 
         if (team == null) {
             throw new TeamNotFoundException("Time com ID " + id + " não encontrado.");

@@ -36,7 +36,7 @@ public class TeamRepository {
         return new HashMap<>(teams);
     }
 
-    public Team getTeamFromId(int id) {
+    public Team getTeamById(int id) {
         return teams.get(id);
     }
 
