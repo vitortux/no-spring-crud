@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import exception.DuplicateTeamException;
+import exception.TeamNotFoundException;
+import exception.NoTeamsException;
 import mapper.TeamMapper;
 import model.dto.TeamDTO;
 import model.entity.Team;
@@ -32,37 +34,45 @@ public class TeamService {
     public Map<Integer, TeamDTO> getAllTeams() {
         Map<Integer, Team> allTeams = repository.getAllTeams();
 
-        // TODO: validação + exception para o EmptyMap().
+        if (allTeams.isEmpty()) {
+            throw new NoTeamsException("Não existem times cadastrados no banco de dados.");
+        }
 
         return allTeams.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> TeamMapper.toDto(entry.getValue())));
     }
 
     public TeamDTO getTeamFromId(int id) {
-        return repository.getAllTeams().containsKey(id) ? TeamMapper.toDto(repository.getTeamFromId(id)) : null;
+        Team team = repository.getTeamFromId(id);
+
+        if (team == null) {
+            throw new TeamNotFoundException("Time com ID " + id + " não encontrado.");
+        }
+
+        return TeamMapper.toDto(team);
     }
 
-    public boolean updateTeam(int id, TeamDTO dto) {
+    public void updateTeam(int id, TeamDTO dto) {
         Team updatedTeam = TeamMapper.toEntity(dto);
         Map<Integer, Team> allTeams = repository.getAllTeams();
 
-        if (allTeams.containsValue(updatedTeam)) {
-            return false;
+        if (!allTeams.containsKey(id)) {
+            throw new TeamNotFoundException("Não foi possível encontrar o time de ID: " + id);
         }
 
-        if (!allTeams.containsKey(id)) {
-            return false;
+        if (allTeams.entrySet().stream()
+                .anyMatch(entry -> entry.getValue().equals(updatedTeam) && entry.getKey() != id)) {
+            throw new DuplicateTeamException("Já existe um time com as mesmas informações.");
         }
 
         repository.updateTeam(id, updatedTeam);
-        return true;
     }
 
-    public boolean deleteTeam(int id) {
-        if (repository.getAllTeams().containsKey(id)) {
-            repository.deleteTeam(id);
-            return true;
+    public void deleteTeam(int id) {
+        if (!repository.getAllTeams().containsKey(id)) {
+            throw new TeamNotFoundException("Não foi possível encontrar o time de ID: " + id);
         }
-        return false;
+
+        repository.deleteTeam(id);
     }
 }
