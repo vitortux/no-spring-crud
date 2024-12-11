@@ -22,16 +22,8 @@ public class TeamController {
         this.service = service;
     }
 
-    public void addTeam() {
+    public void addTeam(TeamDTO newTeam) {
         try {
-            String name = InputValidator.getValidInput("Nome do time:");
-            String city = InputValidator.getValidInput("Cidade do time:");
-            String coach = InputValidator.getValidInput("Treinador do time:");
-            String arena = InputValidator.getValidInput("Arena do time:");
-            String owner = InputValidator.getValidInput("Dono do time:");
-            int championships = InputValidator.getValidIntegerInput("Número de campeonatos:");
-
-            TeamDTO newTeam = new TeamDTO(name, city, coach, arena, owner, championships);
             service.addTeam(newTeam);
 
             logger.log(Level.INFO, () -> "Time \"" + newTeam.name() + "\" adicionado com sucesso.");
@@ -61,16 +53,13 @@ public class TeamController {
             logger.log(Level.INFO, () -> "Não foi possível retornar a lista de times: " + e.getMessage());
             JOptionPane.showMessageDialog(null,
                     "Não há times cadastrados no momento.",
-                    "Listar TImes",
+                    "Listar Times",
                     JOptionPane.INFORMATION_MESSAGE);
-
         }
     }
 
-    public void getTeamById() {
+    public void getTeamById(int id) {
         try {
-            int id = InputValidator.getValidIntegerInput("Digite o ID:");
-
             TeamDTO team = service.getTeamById(id);
 
             logger.log(Level.INFO, () -> "Time \"" + team.name() + "\" recuperado com sucesso.");
@@ -83,9 +72,8 @@ public class TeamController {
         }
     }
 
-    public void updateTeam() {
+    public void updateTeam(int id) {
         try {
-            int id = InputValidator.getValidIntegerInput("Digite o ID:");
             TeamDTO team = service.getTeamById(id);
 
             String name = InputValidator.getValidInput("Nome do time:", team.name());
@@ -111,12 +99,8 @@ public class TeamController {
         }
     }
 
-    public void deleteTeam() {
+    public void deleteTeam(int id) {
         try {
-            String idInput = JOptionPane.showInputDialog(null, "Digite o ID:", "Deletar Time",
-                    JOptionPane.PLAIN_MESSAGE);
-            int id = Integer.parseInt(idInput);
-
             service.deleteTeam(id);
 
             logger.log(Level.INFO, () -> "Time deletado (ID: " + id + ") com sucesso.");
