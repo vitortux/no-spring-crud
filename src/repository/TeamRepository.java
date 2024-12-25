@@ -70,7 +70,7 @@ public class TeamRepository {
     }
 
     private void saveData() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             for (Map.Entry<Integer, Team> entry : teams.entrySet()) {
                 Team team = entry.getValue();
                 writer.write(entry.getKey() + "," + TeamMapper.toCsv(team));
